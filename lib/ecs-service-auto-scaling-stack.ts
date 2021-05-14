@@ -5,6 +5,7 @@ import * as ecs from '@aws-cdk/aws-ecs';
 import * as ecsPatterns from '@aws-cdk/aws-ecs-patterns';
 import { Duration } from '@aws-cdk/core';
 import { Statistic } from '@aws-cdk/aws-cloudwatch';
+import { Schedule } from '@aws-cdk/aws-applicationautoscaling';
 
 export class EcsServiceAutoScalingStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
@@ -13,6 +14,7 @@ export class EcsServiceAutoScalingStack extends cdk.Stack {
     const cluster = this.createCluster();
     const albService = this.createAlbService(cluster);
     this.createDashboard(albService);
+    this.autoScaleBySchedule(albService);
   }
 
   createCluster(): ecs.Cluster {
@@ -121,5 +123,23 @@ export class EcsServiceAutoScalingStack extends cdk.Stack {
         title: 'Target Request Count'
       })
     );
+  }
+
+  autoScaleBySchedule(albService: ecsPatterns.ApplicationLoadBalancedFargateService) {
+    const scalableTaskCount = albService.service.autoScaleTaskCount({
+      maxCapacity: 4
+    });
+
+    scalableTaskCount.scaleOnSchedule('ScheduledScalingScaleOut', {
+      schedule: Schedule.cron({ hour: "9", minute: "0" }),
+      minCapacity: 4,
+      maxCapacity: 8
+    });
+
+    scalableTaskCount.scaleOnSchedule('ScheduledScalingScaleIn', {
+      schedule: Schedule.cron({ hour: "12", minute: "0" }),
+      minCapacity: 2,
+      maxCapacity: 4
+    });
   }
 }
