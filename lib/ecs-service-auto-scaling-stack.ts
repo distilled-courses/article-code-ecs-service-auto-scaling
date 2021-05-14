@@ -13,6 +13,7 @@ export class EcsServiceAutoScalingStack extends cdk.Stack {
     const cluster = this.createCluster();
     const albService = this.createAlbService(cluster);
     this.createDashboard(albService);
+    this.autoScaleByRequestCount(albService);
   }
 
   createCluster(): ecs.Cluster {
@@ -121,5 +122,16 @@ export class EcsServiceAutoScalingStack extends cdk.Stack {
         title: 'Target Request Count'
       })
     );
+  }
+
+  autoScaleByRequestCount(albService: ecsPatterns.ApplicationLoadBalancedFargateService) {
+    const scalableTaskCount = albService.service.autoScaleTaskCount({
+      maxCapacity: 4
+    });
+
+    scalableTaskCount.scaleOnRequestCount('RequestCountScaling', {
+      targetGroup: albService.targetGroup,
+      requestsPerTarget: 10000
+    });
   }
 }
