@@ -5,8 +5,6 @@ import * as ecs from '@aws-cdk/aws-ecs';
 import * as ecsPatterns from '@aws-cdk/aws-ecs-patterns';
 import { Duration } from '@aws-cdk/core';
 import { Statistic } from '@aws-cdk/aws-cloudwatch';
-import { Schedule, CronOptions } from '@aws-cdk/aws-applicationautoscaling';
-
 
 export class EcsServiceAutoScalingStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
