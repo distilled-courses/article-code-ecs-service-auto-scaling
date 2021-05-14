@@ -1,10 +1,14 @@
-# Welcome to your CDK TypeScript project!
+# ECS Service Auto Scaling Article Code
 
-This is a blank project for TypeScript development with CDK.
+This is the code sample to accompany the article at http://distilledcourses.com/blog/ecs-service-auto-scaling-with-the-cdk
 
-The `cdk.json` file tells the CDK Toolkit how to execute your app.
+Branches:
 
-## Useful commands
+* `master`                  builds basic service CDK stack
+* `scale-by-cpu`            extends stack with a target tracking scaling policy (CPU utilization)
+* `scale-by-request-count`  extends stack with a target tracking scaling policy (Target Request Count)
+* `scheduled-scaling`       extends stack with a scheduled scaling example
+## Useful CDK commands
 
  * `npm run build`   compile typescript to js
  * `npm run watch`   watch for changes and compile
